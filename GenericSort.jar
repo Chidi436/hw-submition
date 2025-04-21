@@ -1,0 +1,62 @@
+import java.util.Arrays;
+
+public class GenericSort {
+
+    // Generic Bubble Sort
+    public static <T extends Comparable<T>> void bubbleSort(T[] array) {
+        boolean swapped;
+        for (int i = 0; i < array.length - 1; i++) {
+            swapped = false;
+            for (int j = 0; j < array.length - 1 - i; j++) {
+                if (array[j].compareTo(array[j + 1]) > 0) {
+                    T temp = array[j];
+                    array[j] = array[j + 1];
+                    array[j + 1] = temp;
+                    swapped = true;
+                }
+            }
+            if (!swapped) break;
+        }
+    }
+
+    // Generic Merge Sort
+    public static <T extends Comparable<T>> void mergeSort(T[] array) {
+        if (array.length <= 1) return;
+
+        int mid = array.length / 2;
+        T[] left = Arrays.copyOfRange(array, 0, mid);
+        T[] right = Arrays.copyOfRange(array, mid, array.length);
+
+        mergeSort(left);
+        mergeSort(right);
+        merge(array, left, right);
+    }
+
+    private static <T extends Comparable<T>> void merge(T[] result, T[] left, T[] right) {
+        int i = 0, j = 0, k = 0;
+
+        while (i < left.length && j < right.length) {
+            if (left[i].compareTo(right[j]) <= 0) {
+                result[k++] = left[i++];
+            } else {
+                result[k++] = right[j++];
+            }
+        }
+
+        while (i < left.length) result[k++] = left[i++];
+        while (j < right.length) result[k++] = right[j++];
+    }
+
+    public static void main(String[] args) {
+        Integer[] nums = {5, 3, 8, 1, 2};
+        String[] words = {"banana", "apple", "pear", "grape"};
+
+        System.out.println("Original Integer array: " + Arrays.toString(nums));
+        bubbleSort(nums);
+        System.out.println("Bubble Sorted: " + Arrays.toString(nums));
+
+        System.out.println("Original String array: " + Arrays.toString(words));
+        mergeSort(words);
+        System.out.println("Merge Sorted: " + Arrays.toString(words));
+    }
+}
