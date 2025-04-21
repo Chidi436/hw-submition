@@ -1,0 +1,89 @@
+import java.util.Random;
+import java.util.Arrays;
+
+public class SortComparison {
+
+    // Generate random integer array
+    public static int[] createRandomArray(int length) {
+        int[] array = new int[length];
+        Random rand = new Random();
+        for (int i = 0; i < length; i++) {
+            array[i] = rand.nextInt(101); // Random numbers from 0 to 100
+        }
+        return array;
+    }
+
+    // Bubble Sort
+    public static void bubbleSort(int[] array) {
+        boolean swapped;
+        for (int i = 0; i < array.length - 1; i++) {
+            swapped = false;
+            for (int j = 0; j < array.length - 1 - i; j++) {
+                if (array[j] > array[j + 1]) {
+                    int temp = array[j];
+                    array[j] = array[j + 1];
+                    array[j + 1] = temp;
+                    swapped = true;
+                }
+            }
+            if (!swapped) break;
+        }
+    }
+
+    // Merge Sort
+    public static void mergeSort(int[] array) {
+        if (array.length <= 1) return;
+        int mid = array.length / 2;
+        int[] left = Arrays.copyOfRange(array, 0, mid);
+        int[] right = Arrays.copyOfRange(array, mid, array.length);
+
+        mergeSort(left);
+        mergeSort(right);
+        merge(array, left, right);
+    }
+
+    private static void merge(int[] result, int[] left, int[] right) {
+        int i = 0, j = 0, k = 0;
+
+        // Merge left and right arrays
+        while (i < left.length && j < right.length) {
+            if (left[i] <= right[j]) {
+                result[k++] = left[i++];
+            } else {
+                result[k++] = right[j++];
+            }
+        }
+
+        // Copy remaining elements
+        while (i < left.length) result[k++] = left[i++];
+        while (j < right.length) result[k++] = right[j++];
+    }
+
+    public static void main(String[] args) {
+        int size = 10000; // Try different sizes: 100, 1000, 10000+
+
+        // Generate same random array for fair comparison
+        int[] originalArray = createRandomArray(size);
+        int[] bubbleArray = Arrays.copyOf(originalArray, originalArray.length);
+        int[] mergeArray = Arrays.copyOf(originalArray, originalArray.length);
+
+        // Measure Bubble Sort time
+        long startBubble = System.currentTimeMillis();
+        bubbleSort(bubbleArray);
+        long endBubble = System.currentTimeMillis();
+
+        // Measure Merge Sort time
+        long startMerge = System.currentTimeMillis();
+        mergeSort(mergeArray);
+        long endMerge = System.currentTimeMillis();
+
+        // Print results
+        System.out.println("Array size: " + size);
+        System.out.println("Bubble Sort time: " + (endBubble - startBubble) + " ms");
+        System.out.println("Merge Sort time:  " + (endMerge - startMerge) + " ms");
+
+        // Uncomment to verify sorted results (optional for large arrays)
+        // System.out.println("Bubble Sorted: " + Arrays.toString(bubbleArray));
+        // System.out.println("Merge Sorted:  " + Arrays.toString(mergeArray));
+    }
+}
