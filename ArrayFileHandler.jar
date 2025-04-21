@@ -1,0 +1,104 @@
+import java.io.*;
+import java.util.Random;
+import java.util.Scanner;
+
+public class ArrayFileHandler {
+
+    // 1. Create an array of random integers between 0 and 100
+    public static int[] createRandomArray(int arrayLength) {
+        int[] array = new int[arrayLength];
+        Random rand = new Random();
+        for (int i = 0; i < arrayLength; i++) {
+            array[i] = rand.nextInt(101); // 0 to 100
+        }
+        return array;
+    }
+
+    // 2. Write an array to a file, one number per line
+    public static void writeArrayToFile(int[] array, String filename) {
+        try (PrintWriter writer = new PrintWriter(new FileWriter(filename))) {
+            for (int num : array) {
+                writer.println(num);
+            }
+        } catch (IOException e) {
+            System.out.println("Error writing to file: " + e.getMessage());
+        }
+    }
+
+    // 3. Read integers from a file into an array
+    public static int[] readFileToArray(String filename) {
+        try (Scanner scanner = new Scanner(new File(filename))) {
+            int[] temp = new int[1000]; // assume max 1000 lines
+            int count = 0;
+            while (scanner.hasNextInt()) {
+                temp[count++] = scanner.nextInt();
+            }
+            int[] result = new int[count];
+            System.arraycopy(temp, 0, result, 0, count);
+            return result;
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found: " + e.getMessage());
+            return new int[0];
+        }
+    }
+
+    // 4. Bubble sort implementation (in-place)
+    public static void bubbleSort(int[] array) {
+        boolean swapped;
+        for (int i = 0; i < array.length - 1; i++) {
+            swapped = false;
+            for (int j = 0; j < array.length - 1 - i; j++) {
+                if (array[j] > array[j + 1]) {
+                    // swap
+                    int temp = array[j];
+                    array[j] = array[j + 1];
+                    array[j + 1] = temp;
+                    swapped = true;
+                }
+            }
+            if (!swapped) break;
+        }
+    }
+
+    // 5. Main method to drive the program
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        // Step 1: Get array length
+        System.out.print("Enter array length: ");
+        int length = scanner.nextInt();
+
+        // Step 2: Create random array
+        int[] arr = createRandomArray(length);
+        System.out.println("Random array generated.");
+
+        // Step 3: Write to file
+        String fileName = "numbers.txt";
+        writeArrayToFile(arr, fileName);
+        System.out.println("Array written to " + fileName);
+
+        // Step 4: Read from file
+        int[] readArray = readFileToArray(fileName);
+        System.out.println("Array read from file:");
+
+        for (int num : readArray) {
+            System.out.print(num + " ");
+        }
+        System.out.println();
+
+        // Step 5: Sort the array
+        bubbleSort(readArray);
+        System.out.println("Sorted array:");
+
+        for (int num : readArray) {
+            System.out.print(num + " ");
+        }
+        System.out.println();
+
+        // Step 6: Save sorted array back to file
+        writeArrayToFile(readArray, "sorted_" + fileName);
+        System.out.println("Sorted array written to sorted_" + fileName);
+
+        scanner.close();
+    }
+}
